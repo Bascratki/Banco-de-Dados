@@ -1,0 +1,1 @@
+SELECT * FROM primeiro_teste.pessoa;
