@@ -174,7 +174,6 @@ UNION
 ORDER BY nivel; 
 
 -- 9. Seleção de empregados por departamento específico
--- Usando JOIN
 SELECT E.ID_emp, E.nome
 FROM Empregado AS E 
 JOIN Departamento AS D ON (E.ID_depto = D.ID_depto)
@@ -227,7 +226,6 @@ WHERE YEAR(E.dt_nascimento) >= 1998 AND
 ORDER BY E.nome;
 
 -- Criação da VIEW CompetenciasEmpregados
--- Apaga a VIEW se ela já existir
 DROP VIEW IF EXISTS CompetenciasEmpregados;
 CREATE VIEW CompetenciasEmpregados AS
     (SELECT 
@@ -247,7 +245,7 @@ CREATE VIEW CompetenciasEmpregados AS
 -- Consulta da VIEW CompetenciasEmpregados
 SELECT *
 FROM CompetenciasEmpregados
-ORDER BY Depto, Competencia, Empregado; 
+ORDER BY Depto, Competencia, Empregado;
 
 -- 12. Consultas de agregação de salário
 -- Consulta 1: Agregação de salário com formato padrão
@@ -267,3 +265,37 @@ SELECT
     MAX(salario) AS 'Maior Salário',
     SUM(salario) AS 'Total Salários'
 FROM Empregado;
+
+-- Agregação de salário com formato decimal maior
+SELECT
+    COUNT(*) AS 'Número de Empregados',
+    CONVERT(AVG(salario), DECIMAL(10,2)) AS 'Salário Médio',
+    CONVERT(MIN(salario), DECIMAL(10,2)) AS 'Menor Salário',
+    CONVERT(MAX(salario), DECIMAL(10,2)) AS 'Maior Salário',
+    CONVERT(SUM(salario), DECIMAL(10,2)) AS 'Total Salários'
+FROM Empregado;
+
+-- Agregação por ID de Departamento
+SELECT
+    ID_Depto, -- Campo de agrupamento
+    COUNT(*) AS 'Número de Empregados',
+    CONVERT(AVG(salario), DECIMAL(8,2)) AS 'Salário Médio',
+    MIN(salario) AS 'Menor Salário',
+    MAX(salario) AS 'Maior Salário',
+    SUM(salario) AS 'Total Salários'
+FROM Empregado
+GROUP BY ID_Depto; -- Campo de agrupamento
+
+-- Agregação por nome de Departamento
+SELECT
+    D.Nome AS Departamento, -- Campo de agrupamento como apelido
+    COUNT(*) AS 'Número de Empregados',
+    CONVERT(AVG(salario), DECIMAL(8,2)) AS 'Salário Médio',
+    MIN(salario) AS 'Menor Salário',
+    MAX(salario) AS 'Maior Salário',
+    SUM(salario) AS 'Total Salários'
+FROM Empregado AS E
+JOIN Departamento AS D 
+ON E.ID_Depto = D.ID_Depto -- Condição para o JOIN
+GROUP BY Departamento -- Campo de agrupamento (apelido)
+ORDER BY Departamento -- Ordenação pelo nome do Departamento
